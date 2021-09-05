@@ -12,7 +12,7 @@ const testDto: CreateReviewDto = {
 	name: 'Test',
 	title: 'Title',
 	description: 'Description',
-	ration: 5,
+	rating: 5,
 	productId
 }
 
@@ -37,6 +37,17 @@ describe('AppController (e2e)', () => {
 			.then(({body}: request.Response) => {
 				createdId = body._id
 				expect(createdId).toBeDefined()
+			})
+	});
+
+	it('/review/create (POST - fail)',  () => {
+		return request(app.getHttpServer())
+			.post('/review/create')
+			.send({ ...testDto, rating: 0 })
+			.expect(400)
+			.then(({body}: request.Response) => {
+				// tslint:disable-next-line:no-console
+				console.log(body);
 			})
 	});
 
