@@ -5,8 +5,14 @@ import { CreateReviewDto } from '../src/review/dto/create-review.dto';
 import { Types, disconnect } from 'mongoose';
 import { AppModule } from '../src/app.module';
 import { REVIEW_NOT_FOUND } from '../src/review/review.constans';
+import { AuthDto } from '../src/auth/dto/auth.dto';
 
 const productId = new Types.ObjectId().toString()
+
+const loginDto: AuthDto = {
+	login: 'testuser@.ru',
+	password: '1234'
+}
 
 const testDto: CreateReviewDto = {
 	name: 'Test',
@@ -19,6 +25,7 @@ const testDto: CreateReviewDto = {
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
 	let createdId: string
+	let token: string
 
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -27,6 +34,11 @@ describe('AppController (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 		await app.init();
+
+		const { body } = await request(app.getHttpServer())
+			.post('/auth/login')
+			.send(loginDto)
+		token = body.access_token
 	});
 
 	it('/review/create (POST - success)',  () => {
@@ -70,14 +82,17 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/review/:id (DELETE - success)', () => {
+		console.log(token);
 		return request(app.getHttpServer())
 			.delete('/review/' + createdId)
+			.set('Authorization', 'Bearer ' + token)
 			.expect(200)
 	});
 
 	it('/review/:id (DELETE - fail)', () => {
 		return request(app.getHttpServer())
 			.delete('/review/' + new Types.ObjectId().toString())
+			.set('Authorization', 'Bearer ' + token)
 			.expect(404, {
 				statusCode: 404,
 				message: REVIEW_NOT_FOUND
