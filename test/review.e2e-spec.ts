@@ -22,7 +22,7 @@ const testDto: CreateReviewDto = {
 	productId
 }
 
-describe('AppController (e2e)', () => {
+describe('ReviewController (e2e)', () => {
 	let app: INestApplication;
 	let createdId: string
 	let token: string
@@ -57,10 +57,6 @@ describe('AppController (e2e)', () => {
 			.post('/review/create')
 			.send({ ...testDto, rating: 0 })
 			.expect(400)
-			.then(({body}: request.Response) => {
-				// tslint:disable-next-line:no-console
-				console.log(body);
-			})
 	});
 
 	it('/review/byProduct/:productId (GET - success)',  () => {
@@ -82,7 +78,6 @@ describe('AppController (e2e)', () => {
 	});
 
 	it('/review/:id (DELETE - success)', () => {
-		console.log(token);
 		return request(app.getHttpServer())
 			.delete('/review/' + createdId)
 			.set('Authorization', 'Bearer ' + token)
