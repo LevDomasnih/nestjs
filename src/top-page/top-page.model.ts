@@ -36,7 +36,7 @@ export interface TopPageModel extends Base {}
 export class TopPageModel extends TimeStamps{
 
 	@prop({ enum: TopLevelCategory })
-	firstLevelCategory: TopLevelCategory
+	firstCategory: TopLevelCategory
 
 	@prop()
 	secondCategory: string
